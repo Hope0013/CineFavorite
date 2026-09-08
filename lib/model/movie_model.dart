@@ -1,4 +1,5 @@
 class Movie {
+  // Atributos
   final int id;
   final String title;
   final String? posterPath;
@@ -15,16 +16,20 @@ class Movie {
     this.rating = 0.0,
   });
 
+// Tratamento de dados vindos da API do TMDB
   factory Movie.fromTmdbJson(Map<String, dynamic> json) {
     return Movie(
       id: json['id'],
+      // A API do TMDB as vezes usa 'title' (filmes) e as vezes usa 'name' (séries). O uso do '??' garante que o app não quebre
       title: json['title'] ?? json['name'] ?? 'Sem Título',
       posterPath: json['poster_path'],
       overview: json['overview'] ?? 'Sem sinopse disponível.',
+      // APIs JSON as vezes mandam números inteiros em vez de decimais (8.0). Fazer o cast para 'num' antes de chamar '.toDouble()' previne erros
       voteAverage: json['vote_average'] != null ? (json['vote_average'] as num).toDouble() : 0.0,
     );
   }
 
+// Tratamento de dados vindos do Banco de Dados
   factory Movie.fromDbMap(Map<String, dynamic> map) {
     return Movie(
       id: map['movie_id'],

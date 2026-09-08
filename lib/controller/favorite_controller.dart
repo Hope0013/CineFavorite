@@ -10,6 +10,8 @@ class FavoriteController {
       'SELECT movie_id, title, poster_path, overview, vote_average, rating FROM favorites WHERE user_id = @userId',
       substitutionValues: {'userId': userId},
     );
+    // Uso de map para converter a lista do banco diretamente em uma lista de objetos 'Movie',
+    // economizando o uso de um laço 'for'
 
     return results.map((row) => Movie.fromDbMap(row['favorites']!)).toList();
   }
@@ -25,7 +27,7 @@ class FavoriteController {
     );
 
     if (check.isNotEmpty) {
-      return false; // Já é favorito
+      return false;
     }
 
     await conn.query(

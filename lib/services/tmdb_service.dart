@@ -8,6 +8,8 @@ class TmdbService {
 
   // Função para buscar filmes
   static Future<List<Movie>> searchMovies(String query) async {
+    // Se a barra de pesquisa estiver vazia, encerra a função
+    // Isso economiza "uso da internet" do usuário e requisições a API
     if (query.isEmpty) return [];
 
     try {

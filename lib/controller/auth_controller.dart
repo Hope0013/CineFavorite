@@ -12,6 +12,8 @@ class AuthController {
 
     List<UserModel> users = [];
     for (var row in results) {
+      // mappedResultsQuery retorna os dados agrupados pelo nome da tabela.
+      // Por isso é necessário acessar row['users'] antes de extrair os campos.
       var userMap = Map<String, dynamic>.from(row['users']!);
       users.add(UserModel.fromDbMap(userMap));
     }
@@ -27,10 +29,15 @@ class AuthController {
       substitutionValues: {'name': name},
     );
 
+    // Lógica de "login ou registro" automático:
+    // Se o usuário existir (isNotEmpty), retorna o cadastro existente.
+
     if (result.isNotEmpty) {
       var userMap = Map<String, dynamic>.from(result.first['users']!);
       return UserModel.fromDbMap(userMap);
     } else {
+      // Se não existir, insere o novo usuário no banco e usa o returning
+      // para devolver os dados criados (incluindo o ID gerado) na mesma requisição.
       var insertResult = await conn.mappedResultsQuery(
         'INSERT INTO users (name, profile_pic) VALUES (@name, @pic) RETURNING id, name, profile_pic',
         substitutionValues: {'name': name, 'pic': profilePic},
